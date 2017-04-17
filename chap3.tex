@@ -1,1 +1,57 @@
-\chapter{Landmark Graph Construction}\label{Chap:3}
+\chapter{TrueSkill\texttrademark~Rating System}\label{Chap:3}
+TrueSkill~\cite{TS07} is a Gaussian rating system developed by Microsoft Research in 2007 to rank players on Xbox Live for the purpose of creating competitive matches for players with similar skill levels. While the Elo rating system is applicable to only two-player matches, the TrueSkill ranking system extends the use cases to multi-player matches. Section~\ref{Sec: tmm} discusses the Approximate Bayesian Inference --- the mathematical backbone of the TrueSkill rating system. Section~\ref{Sec: imp} presents the process of building predictive models based on an open-source implementation of the TrueSkill rating system. 
+
+\section{Approximate Bayesian Inference}\label{Sec: tmm}
+
+The approach described in Section~\ref{Sec: approach} can be modelled as a Bayesian Inference process. Define a vector $\matr{s}  = [s_{1}, s_{2}, \ldots, s_{n}]^{\intercal}$ representing the individual \emph{skill} of $n$ teams in a match (in the case of NCAA basketball tournament, $n = 2$). Further assume that each skill follows a Gaussian distribution $s_{i} \sim \mathcal{N}(\mu_{i}, \sigma_{i}^{2})$ and collectively, the \emph{prior} joint distribution of skills is a n-variate Gaussian distribution $p(\matr{s}) = \mathcal{N}_{n}(\matr{s}; \matr{\mu}, \matr{\Sigma})$
+
+In a match, each team is expected to exhibit a certain \emph{performance} $p_{i} \sim \mathcal{N}(s_{i}, \beta_{i}^{2})$ that varies around its skill. The match result can be represented as a set of rankings in ascending order for each team, namely, $\matr{r} = [r_{1}, r_{2}, \ldots, r_{n}]^{\intercal}$ where $r_{1} \leq r_{2}, \ldots, r_{n - 1} \leq r_{n}$. In reality, there are many factors that may affect the outcome of a match, but for the purpose of Bayesian Inference, the assumption is that it is the differences in team performances that cause the differences in team rankings. According to the Bayes' Theorem, the posterior distribution $p(\matr{s} | \matr{r})$ is given by
+\begin{equation}\label{Eqn: bayes}
+p(\matr{s} | \matr{r}) = \frac{P(\matr{r} | \matr{s})p(\matr{s})}{P(\matr{r})} = \frac{P(\matr{r} | \matr{s})p(\matr{s})}{\int P(\matr{r} | \matr{s})p(\matr{s})d\matr{s}}
+\end{equation}
+
+The above formula demonstrates the use of Bayes' Theorem to calculate the updated skill distribution (posterior) given the match outcome (evidence) and the expectations (likelihood and prior) on the match outcome before the match. However, the posterior distribution is no longer a Gaussian distribution and oftentimes, the integral is intractable. A common solution is to calculate a Gaussian distribution $\mathcal{N}_{n}(\matr{s}; \hat{\matr{\mu}}, \hat{\matr{\Sigma}})$ as an approximation to the posterior distribution $p(\matr{s} | \matr{r})$ so that the Kullback-Leibler divergence between the two distributions is minimised. 
+
+A number of approximation techniques are available. For the TrueSkill rating system, it approximates the posterior distribution by setting up a \emph{factor graph} which is a bipartite graph containing two kinds of vertices: variables and factors. A variable stores some value of interests and a factor represents some operations on one or more variables. The Bayesian Inference process is modelled as passing some \emph{message}s, which are some real-valued functions of a variable or a factor, throughout the factor graph. Figure~\ref{Fig:fact_grph} shows an example factor graph of a simple two-player match. Based on skill $s_{i}$ and performance $p_{i}$, it calculates the expected performance difference $p_{1} - p_{2}$ and compares that with an externally supplied outcome $d$. The $\mathbb{I}$ denotes an indicator function to assert whether $d$ is consistent with the expectation, depending on which a different update is performed on $s_{1}$ and $s_{2}$. 
+
+\begin{figure}[h!]
+\includegraphics[scale=0.5]{factor_graph}
+\centering
+\caption{An example of factor graph}\label{Fig:fact_grph}
+\end{figure}
+
+The ultimate goal of a factor graph is to obtain a set of update equations that indicate how each $\mu_{i}$ and $\sigma_{i}$ should be updated. However, passing messages throughout larger factor graphs can involve very intensive computations. As suggested by~\cite{RC11}, there is an alternative but easier way of getting the same set of update equations based the following theorem. 
+\begin{theorem}
+Let $\matr{z}$ be a k-dimensional random vector $[z_{1}, z_{2}, \ldots, z_{k}]^{\intercal}$ with a probability distribution function of the form
+\begin{equation}\label{Eqn: z_dist}
+\frac{\phi_{k}(\matr{z})f(\matr{z})}{\int \phi_{k}(\matr{z})f(\matr{z})d\matr{z}}
+\end{equation}
+where $\phi_{k}$ is a k-variate standard Gaussian distribution function. Then, the expectation of $\matr{z}$ is given by
+\begin{equation}
+E[\matr{z}] = E\Big{[}\frac{\nabla f(\matr{z})}{f(\matr{z})}\Big{]}
+\end{equation}
+and also
+\begin{equation}
+E[z_{i}z_{j}] = \delta_{ij} + E\Big{[}\frac{\nabla^{2} f(\matr{z})}{f(\matr{z})}\Big{]}
+\end{equation}
+where $\delta_{ij} = 1$ if $i = j$ and $\delta_{ij} = 0$ otherwise. 
+\end{theorem}
+
+To link Equation~\ref{Eqn: z_dist} with the Bayes' Theorem in Equation~\ref{Eqn: bayes}, notice that the match outcome is dependent on performances and performances are related to skills; therefore, the likelihood probability $P(\matr{r} | \matr{s})$ can be expressed as some function of skill $f : \matr{s} \rightarrow [0, 1]$. Furthermore, since each $s_{i} \sim \mathcal{N}(\mu_{i}, \sigma_{i}^{2})$, define the z-score vector $\matr{z} = [z_{1}, z_{2}, \ldots, z_{n}]^{\intercal}$ where 
+\begin{equation}
+z_{i} = \frac{s_{i} - \mu_{i}}{\sigma_{i}} 
+\end{equation}
+Therefore, the probability distribution $p(\matr{z}) = \phi_{n}(\matr{z})$ and the likelihood probability $P(\matr{r} | \matr{s})$ is also a function of $\matr{z}$. Then according to Equation~\ref{Eqn: bayes}, 
+\begin{equation}
+p(\matr{z} | \matr{r}) = \frac{P(\matr{r} | \matr{z})p(\matr{z})}{P(\matr{r})} = \frac{\phi_{n}(\matr{z})f(\matr{z})}{\int \phi_{n}(\matr{z})f(\matr{z})d\matr{z}}
+\end{equation}
+The values of interest are $\matr{\mu}^{new}$ and $\matr{\Sigma}^{new}$, which is related to $E[\matr{z}]$ by
+\begin{equation}
+\matr{\mu}^{new} = E[\matr{s}] = E[\matr{\mu} + \matr{\Sigma}\matr{z}] = \matr{\mu} + \matr{\Sigma}E[\matr{z}]
+\end{equation}
+and
+\begin{equation}
+\matr{\Sigma}^{new} = Var[\matr{s}] = \matr{\Sigma}\matr{\Sigma}^{\intercal}Var[\matr{z}] = \matr{\Sigma}\matr{\Sigma}^{\intercal}E[(\matr{z} - E[\matr{z}])(\matr{z} - E[\matr{z}])^{\intercal}]
+\end{equation}
+
+\section{Implementation}\label{Sec: imp}

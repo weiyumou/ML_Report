@@ -10,56 +10,47 @@ A level-1 auxiliary file: chap4.aux
 A level-1 auxiliary file: biblio.aux
 The style file: amsplain.bst
 Database file #1: main.bib
-Warning--entry type for "NCAA17" isn't style-file defined
---line 26 of file main.bib
-Warning--entry type for "WIK17" isn't style-file defined
---line 38 of file main.bib
-Warning--entry type for "NP17" isn't style-file defined
---line 49 of file main.bib
-Warning--entry type for "NP15" isn't style-file defined
---line 60 of file main.bib
-Warning--entry type for "KG16" isn't style-file defined
---line 71 of file main.bib
+Warning--missing booktitle in TS07
 Warning--missing pages in PJ06
-You've used 6 entries,
+You've used 9 entries,
             2213 wiz_defined-function locations,
-            536 strings with 4560 characters,
-and the built_in function-call counts, 1322 in all, are:
-= -- 99
-> -- 48
+            563 strings with 5247 characters,
+and the built_in function-call counts, 2329 in all, are:
+= -- 191
+> -- 86
 < -- 0
-+ -- 21
-- -- 14
-* -- 80
-:= -- 210
-add.period$ -- 6
-call.type$ -- 6
-change.case$ -- 25
++ -- 38
+- -- 26
+* -- 159
+:= -- 366
+add.period$ -- 9
+call.type$ -- 9
+change.case$ -- 40
 chr.to.int$ -- 0
-cite$ -- 7
-duplicate$ -- 66
-empty$ -- 141
-format.name$ -- 14
-if$ -- 274
+cite$ -- 11
+duplicate$ -- 111
+empty$ -- 231
+format.name$ -- 26
+if$ -- 496
 int.to.chr$ -- 0
-int.to.str$ -- 6
-missing$ -- 7
-newline$ -- 29
-num.names$ -- 12
-pop$ -- 62
+int.to.str$ -- 9
+missing$ -- 14
+newline$ -- 38
+num.names$ -- 18
+pop$ -- 79
 preamble$ -- 2
-purify$ -- 19
+purify$ -- 31
 quote$ -- 0
-skip$ -- 40
+skip$ -- 73
 stack$ -- 0
-substring$ -- 31
-swap$ -- 7
+substring$ -- 97
+swap$ -- 19
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 24
-warning$ -- 1
-while$ -- 12
-width$ -- 7
-write$ -- 52
-(There were 6 warnings)
+type$ -- 34
+warning$ -- 2
+while$ -- 21
+width$ -- 10
+write$ -- 83
+(There were 2 warnings)

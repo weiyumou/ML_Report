@@ -346,7 +346,8 @@
    \@afterindentfalse		% Suppresses indent in first paragraph.  Change
    \secdef\@chapter\@schapter}	% to \@afterindenttrue to have indent.
 \else
-\def\chapter{\cleardoublepage	% Starts new page.
+\def\chapter{
+%\cleardoublepage	% Starts new page.
    \thispagestyle{plain}	% Page style of chapter page is 'plain'
    \global\@topnum\z@		% Prevents figures from going at top of page.
    \@afterindentfalse		% Suppresses indent in first paragraph.  Change

@@ -14,7 +14,6 @@ There are a number of potential features that can be selected from the data set 
 
 \begin{table}[h!]
 \centering
-%\resizebox{\columnwidth}{!}{
 \begin{tabular}{ | l | l | }
 \hline
 \textbf{Feature} & \textbf{Description} \\ \hline
@@ -25,7 +24,6 @@ Lscore & The number of points scored by the losing team \\ \hline
 Wloc & The location of the winning team \\ \hline
 Numot & The number of overtime periods in the game \\ \hline
 \end{tabular}
-%}
 \caption{A Summary of the Basic Features}\label{Ta:basic_feature}
 \end{table}
 
@@ -71,10 +69,10 @@ The problem to solve can be categorised as a classification problem under superv
 
 The inputs to these popular models are the seed positions of each team, since the seeds represent an official view on the relative strength of each team. However, the performances of these models are not as good as expected: the logistic model only gives a \nth{283} position on the leaderboard. Moreover, only teams in a tournament are assigned a seed but the number of tournament matches is not large enough to support accurate predictions. Although~\cite{PJ06} suggests a combination of logistic regression and Markov chain to predict match outcomes, these popular models alone based on simply seeds are unlikely to give a good result. 
 
-\section{Approach}
-In light of the challenges identified, the general approach is to quantitatively describe the \emph{skill} of each team, from which the winning probabilities are derived. This section gives a rough idea about the approach used in this project, while the detailed mathematical principles are left to Chapter~\ref{}. 
+\section{Approach}\label{Sec: approach}
+In light of the challenges identified, the general approach is to quantitatively describe the \emph{skill} of each team, from which the winning probabilities are derived. This section gives a rough idea about the approach used in this project, while the detailed mathematical principles are left to Chapter~\ref{Chap:3}. 
 
-The system used to estimate the skill of a team is known as a \emph{rating system}. An example of a rating system is the famous Elo rating system widely applied in board games like chess and Go. In a Gaussian rating system, each team $i$ is assumed to have a skill $s_{i}$ that follows a Gaussian distribution $s_{i} \sim \mathcal{N}(\mu_{i}, \sigma_{i}^{2})$, where $\mu_{i}$ is the mean skill of a team and $\sigma_{i}$ can be considered as the system's \emph{belief} about the team's skill level. 
+The system used to estimate the skill of a team is known as a \emph{rating system}. An example of a rating system is the famous Elo rating system~\cite{AE78} widely applied in board games like chess and Go. In a Gaussian rating system, each team $i$ is assumed to have a skill $s_{i}$ that follows a Gaussian distribution $s_{i} \sim \mathcal{N}(\mu_{i}, \sigma_{i}^{2})$, where $\mu_{i}$ is the mean skill of a team and $\sigma_{i}$ can be considered as the system's \emph{belief} about the team's skill level. 
 
 Depending on the rating system, the skill of a team is updated after a single match or a series of matches within a specific period. The amount of such a update depends on how \emph{surprising} a match outcome is --- if, prior to a match, Team A is expected to have a very high probability of beating Team B based on their \emph{skill gap}, an outcome that Team A actually wins the game will \emph{not} result in a significant update on either Team A's or Team B's skill; however, on the other hand, if it turns out that Team B performs superbly and beats Team A at the end of the match despite its lower skill level, which is known as an ``upset'' in sport term, there \emph{will} be a significant increase in Team B's skill and a significant decrease in Team A's skill. But in either case, the belief of skills $\sigma_{i}$ will shrink because the rating system becomes more confident about the two teams' skill level. 
 

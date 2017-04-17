@@ -25,7 +25,7 @@
 %% Page Intentionally Left Blank'', use the ``leftblank'' option, as
 %% above. 
 
-\documentclass[12pt,vi,twoside,leftblank,singlespace]{mitthesis}
+\documentclass[12pt,vi,twoside,singlespace]{mitthesis}
 \usepackage{lgrind}
 %% These have been added at the request of the MIT Libraries, because
 %% some PDF conversions mess up the ligatures.  -LB, 1/22/2014
@@ -42,6 +42,7 @@
 \usepackage{subcaption}
 \usepackage[super]{nth}
 \usepackage{hyperref}
+\usepackage{bm}
 \hypersetup{
     colorlinks=true,
     linkcolor=blue,
@@ -50,6 +51,7 @@
 \urlstyle{same}
 \graphicspath{ {images/} }
 \newcommand{\rnum}[1]{\uppercase\expandafter{\romannumeral #1\relax}}
+\newcommand{\matr}[1]{\bm{#1}}
 \pagestyle{headings}
 %% This bit allows you to either specify only the files which you wish to
 %% process, or `all' to process all files which you \include.

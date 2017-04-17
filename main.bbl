@@ -9,8 +9,21 @@
 \providecommand{\href}[2]{#2}
 \begin{thebibliography}{1}
 
+\bibitem{RC11}
+Ruby C.Weng and Chih-Jen Lin, \emph{A bayesian approximation method for online
+  ranking}, Journal of Machine Learning Research \textbf{12} (2011), 267--300.
+
+\bibitem{AE78}
+Arpad~Emmerich Elo, \emph{The rating of chess players, past and present}, Arco
+  Publishing, New York, 1978.
+
+\bibitem{TS07}
+Ralf Herbrich, Tom Minka, and Thore Graepel, \emph{Trueskill(tm): A bayesian
+  skill rating system}, MIT Press, January 2007, pp.~569--576.
+
 \bibitem{KG16}
-Kaggle Inc., \emph{March machine learning mania 2016}, March 2016.
+Kaggle Inc., \emph{March machine learning mania 2016},
+  \url{https://www.kaggle.com/c/march-machine-learning-mania-2016}, March 2016.
 
 \bibitem{PJ06}
 Paul Kvam and Joel~S. Sokol, \emph{A logistic regression/markov chain model for
@@ -18,17 +31,20 @@ Paul Kvam and Joel~S. Sokol, \emph{A logistic regression/markov chain model for
 
 \bibitem{NP17}
 Net Prophet, \emph{Exploring algorithms for predicting ncaa basketball games},
-  April 2017.
+  \url{http://netprophetblog.blogspot.sg/}, April 2017.
 
 \bibitem{NP15}
 Net Prophet\vspace{0mm}, \emph{Five mistakes kaggle competitors should avoid},
+  \url{http://netprophetblog.blogspot.sg/2015/02/five-small-thoughts-for-kaggle.html},
   February 2015.
 
 \bibitem{NCAA17}
-Wikipedia, \emph{Ncaa division \rnum{1} men's basketball tournament}, April
-  2017.
+Wikipedia, \emph{Ncaa division \rnum{1} men's basketball tournament},
+  \url{https://en.wikipedia.org/wiki/NCAA\_Division\_I\_Men\%27s\_Basketball\_Tournament},
+  April 2017.
 
 \bibitem{WIK17}
-Wikipedia\vspace{0mm}, \emph{Rating percentage index}, March 2017.
+Wikipedia\vspace{0mm}, \emph{Rating percentage index},
+  \url{https://en.wikipedia.org/wiki/Rating_Percentage_Index}, March 2017.
 
 \end{thebibliography}
