@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.2.22)  17 APR 2017 11:53
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.2.22)  17 APR 2017 13:09
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -413,8 +413,8 @@ Package hyperref Info: Option `colorlinks' set `true' on input line 49.
 
 Enter file names to process, (chap1,chap2 ...), or `all' to process all files:
 
-\files=chap1
-Including only chap1.
+\files=chap2
+Including only chap2.
 \c@defn=\count119
 \c@theorem=\count120
 (./main.aux (./cover.aux) (./contents.aux) (./chap1.aux) (./chap2.aux)
@@ -502,35 +502,29 @@ LaTeX Info: Redefining \nameref on input line 70.
 \@outlinefile=\write3
 \openout3 = `main.out'.
 
-\openout2 = `chap1.aux'.
+\openout2 = `chap2.aux'.
 
- (./chap1.tex [4{/usr/local/texlive/2016/texmf-var/fonts/map/pdftex/updmap/pdft
-ex.map}
-
-
-
-
-
-]
-Chapter 1.
+ (./chap2.tex
+Chapter 2.
 <<ot1.cmap>><<oml.cmap>><<oms.cmap>><<omx.cmap>>
-LaTeX Font Info:    Try loading font information for U+msa on input line 7.
+LaTeX Font Info:    Try loading font information for U+msa on input line 21.
 
 (/usr/local/texlive/2016/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 7.
+LaTeX Font Info:    Try loading font information for U+msb on input line 21.
 
 (/usr/local/texlive/2016/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-) [5] [6]
-<images/expected_score.png, id=66, 578.16pt x 433.62pt>
-File: images/expected_score.png Graphic file (type png)
+) [9
 
-<use images/expected_score.png>
-Package pdftex.def Info: images/expected_score.png used on input line 39.
-(pdftex.def)             Requested size: 265.95682pt x 199.46762pt.
- [7 <./images/expected_score.png>]) [8]
+
+
+
+
+
+{/usr/local/texlive/2016/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [10]) [
+11]
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 90.
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 90.
 
@@ -538,54 +532,55 @@ Package atveryend Info: Empty hook `AfterLastShipout' on input line 90.
 (./chap3.aux) (./chap4.aux) (./biblio.aux))
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 90.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 90.
-Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: B69D8BE574C53BA8A67A4025625F3832;295.
 
 
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+Package rerunfilecheck Warning: File `main.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
 
+Package rerunfilecheck Info: Checksums for `main.out':
+(rerunfilecheck)             Before: B69D8BE574C53BA8A67A4025625F3832;295
+(rerunfilecheck)             After:  22053646C12407869EECF9D99B99A706;342.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 90.
  ) 
 Here is how much of TeX's memory you used:
- 8159 strings out of 493014
- 120302 string characters out of 6133351
- 204840 words of memory out of 5000000
- 11493 multiletter control sequences out of 15000+600000
- 16199 words of font info for 44 fonts, out of 8000000 for 9000
+ 8153 strings out of 493014
+ 120213 string characters out of 6133351
+ 207040 words of memory out of 5000000
+ 11491 multiletter control sequences out of 15000+600000
+ 16978 words of font info for 45 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 42i,10n,41p,914b,339s stack positions out of 5000i,500n,10000p,200000b,80000s
-pdfTeX warning (dest): name{cite.WIK17} has been referenced but does not exis
-t, replaced by a fixed one
-
-pdfTeX warning (dest): name{cite.NCAA17} has been referenced but does not exist
+ 42i,8n,41p,1290b,350s stack positions out of 5000i,500n,10000p,200000b,80000s
+pdfTeX warning (dest): name{cite.NP15} has been referenced but does not exist
 , replaced by a fixed one
 
-pdfTeX warning (dest): name{cite.KG16} has been referenced but does not exist, 
+pdfTeX warning (dest): name{section.1.4} has been referenced but does not exist
+, replaced by a fixed one
+
+pdfTeX warning (dest): name{section.1.3} has been referenced but does not exist
+, replaced by a fixed one
+
+pdfTeX warning (dest): name{section.1.2} has been referenced but does not exist
+, replaced by a fixed one
+
+pdfTeX warning (dest): name{section.1.1} has been referenced but does not exist
+, replaced by a fixed one
+
+pdfTeX warning (dest): name{chapter.1} has been referenced but does not exist, 
 replaced by a fixed one
 
-pdfTeX warning (dest): name{cite.NP17} has been referenced but does not exist, 
-replaced by a fixed one
-
-{/usr/local/texlive/2016/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}{/
-usr/local/texlive/2016/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}</u
-sr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></us
-r/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr
-/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/l
-ocal/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/loc
-al/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/
-texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/t
-exlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/tex
-live/2016/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb></usr/local/texli
-ve/2016/texmf-dist/fonts/type1/public/cm-super/sfbx1728.pfb></usr/local/texlive
-/2016/texmf-dist/fonts/type1/public/cm-super/sfbx2488.pfb></usr/local/texlive/2
-016/texmf-dist/fonts/type1/public/cm-super/sfrm0800.pfb></usr/local/texlive/201
-6/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local/texlive/2016/
-texmf-dist/fonts/type1/public/cm-super/sfsl1200.pfb></usr/local/texlive/2016/te
-xmf-dist/fonts/type1/public/cm-super/sfti1200.pfb>
-Output written on main.pdf (5 pages, 220691 bytes).
+{/usr/local/texlive/2016/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}</
+usr/local/texlive/2016/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb></us
+r/local/texlive/2016/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb></usr/
+local/texlive/2016/texmf-dist/fonts/type1/public/cm-super/sfbx1728.pfb></usr/lo
+cal/texlive/2016/texmf-dist/fonts/type1/public/cm-super/sfbx2488.pfb></usr/loca
+l/texlive/2016/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local/
+texlive/2016/texmf-dist/fonts/type1/public/cm-super/sfsl1200.pfb></usr/local/te
+xlive/2016/texmf-dist/fonts/type1/public/cm-super/sfti1200.pfb>
+Output written on main.pdf (3 pages, 117750 bytes).
 PDF statistics:
- 141 PDF objects out of 1000 (max. 8388607)
- 111 compressed objects within 2 object streams
- 21 named destinations out of 1000 (max. 500000)
- 66 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 92 PDF objects out of 1000 (max. 8388607)
+ 74 compressed objects within 1 object stream
+ 18 named destinations out of 1000 (max. 500000)
+ 61 words of extra memory for PDF output out of 10000 (max. 10000000)
 

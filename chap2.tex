@@ -2,15 +2,70 @@
 
 \section{Challenges}
 
-There are various challenges in tackling the problem, namely, which features to use, and which machine learning technique to use. There might also be a possible lack of direct match between two teams, where we will need to estimate the result.
-
+In the attempt to tackle the problem, various challenges arise that are worth mentioning.
 %\subsection{Feature Selection}
 %
-%Features are pieces of information that may be useful for predictions. As mentioned in Section~\ref{Sec:data_set}, Kaggle provides a comprehensive set of various data which might be useful for us. However, we have to choose the features that satisfy the two criteria of usefulness and relevance to tackle this problem.
+%As mentioned in Section~\ref{Sec:data_set}, Kaggle provides a comprehensive set of various data which might be useful for us. However, we have to choose the features that satisfy the two criteria of usefulness and relevance to tackle this problem.
 
-\subsection{Obsolete Data Sets}
+\subsection{Feature Selection}
 
-Regardless of the machine-learning technique used, the most \emph{relevant} data is the historical match records during both regular and tournament seasons. However, some data sets contain match records that date back to as early as 1985, which are no longer \emph{useful} in today's context. After all, the NCAA tournament teams consist of \emph{college students} who can only stay with a team for a maximum of four years before graduation. Since only team-level data is available, it is difficult to quantify the effect that changes in a team's composition bring on the skill of that team, as players constantly leave and join the team. Moreover, there were some substantial updates on the Tournament's rules at the beginning of the 2008-2009 season~\cite{NP15}, which also affected the strategy teams used in the subsequent tournaments. Therefore, only the most recent match records are useful for prediction. For the purpose of this project, a four-year window from 2013 to 2016 is selected and all data used in this project fall within this window. 
+Features are pieces of information that may be useful for predictions. It is generous of Kaggle to provide a comprehensive collection of data. However, not all data is relevant to making predictions. Before a set of features can be selected, careful choices must be made on which data sets to use and which portion of that data set is relevant to solving the problem. 
+
+Regardless of the machine-learning technique used, the most obvious choice of data sets to use is the historical match records for both regular and tournament seasons. However, some data sets contain match records that date back to as early as 1985, which are no longer relevant in today's context. After all, the NCAA tournament teams consist of \emph{college students} who can only stay with a team for a maximum of four years before graduation. As players constantly leave and join the team, it is difficult to quantify the effect brought by changes in a team's composition on the strength of that team, given only the team-level data. Moreover, there were some substantial updates on the Tournament's rules at the beginning of the 2008-2009 season~\cite{NP15}, which also affected the strategies teams used in the subsequent tournaments. Therefore, only the most recent match records are useful for prediction. For the purpose of this project, a four-year window from 2013 to 2016 is selected and all data used in this project fall within this window. In addition, only the match records from the regular seasons are actually used, since there are only a few records from the tournament seasons which add little value to making predictions. 
+
+There are a number of potential features that can be selected from the data set \textbf{RegularSeasonDetailedResult}. The potential features are further categorised as basic and additional features. Table~\ref{Ta:basic_feature} gives a summary of the basic features. 
+
+\begin{table}[h!]
+\centering
+%\resizebox{\columnwidth}{!}{
+\begin{tabular}{ | l | l | }
+\hline
+\textbf{Feature} & \textbf{Description} \\ \hline
+Wteam & The id number of the team that won the game \\ \hline
+Wscore & The number of points scored by the winning team \\ \hline
+Lteam & The id number of the team that lost the game \\ \hline
+Lscore & The number of points scored by the losing team \\ \hline
+Wloc & The location of the winning team \\ \hline
+Numot & The number of overtime periods in the game \\ \hline
+\end{tabular}
+%}
+\caption{A Summary of the Basic Features}\label{Ta:basic_feature}
+\end{table}
+
+The additional features describe both \emph{offensive} and \emph{defensive} strengths of both winning team and losing team. Table~\ref{Ta:offensive_feature} gives a summary of features describing offensive strengths, while Table~\ref{Ta:defensive_feature} focuses on defensive strengths. Although the two tables list features from the winning team's perspective, another duplicated set of features also exist for the losing team. 
+
+\begin{table}[h!]
+\centering
+%\resizebox{\columnwidth}{!}{
+\begin{tabular}{ | l | l | }
+\hline
+\textbf{Feature} & \textbf{Description} \\ \hline
+Wfgm & The number of field goals made by the winning team\\ \hline
+Wfgm3 & The number of three pointers made by the winning team \\ \hline
+Wftm & The number of free throws made by the winning team \\ \hline
+Wor & The number of offensive rebounds by the winning team \\ \hline
+Wast & The number of assists by the winning team \\ \hline
+Wstl & The number of steals by the winning team \\ \hline
+Wblk & The number of blocks by the winning team \\ \hline
+\end{tabular}
+%}
+\caption{A Summary of the Offensive Features}\label{Ta:offensive_feature}
+\end{table}
+
+\begin{table}[h!]
+\centering
+%\resizebox{\columnwidth}{!}{
+\begin{tabular}{ | l | l | }
+\hline
+\textbf{Feature} & \textbf{Description} \\ \hline
+Wfga & The number of field goals attempted by the winning team \\ \hline
+Wfga3 & The number of three pointers attempted by the winning team\\ \hline
+Wfta & The number of free throws attempted by the winning team\\ \hline
+Wdr & The number of defensive rebounds by the winning team \\ \hline
+\end{tabular}
+%}
+\caption{A Summary of the Defensive Features}\label{Ta:defensive_feature}
+\end{table}
 
 \subsection{Complex Interrelationship}
 
