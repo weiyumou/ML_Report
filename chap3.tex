@@ -21,7 +21,7 @@ A number of approximation techniques are available. For the TrueSkill rating sys
 \end{figure}
 
 The ultimate goal of a factor graph is to obtain a set of update equations that indicate how each $\mu_{i}$ and $\sigma_{i}$ should be updated. However, passing messages throughout larger factor graphs can involve very intensive computations. As suggested by~\cite{RC11}, there is an alternative but easier way of getting the same set of update equations based the following theorem. 
-\begin{theorem}
+\begin{theorem}\label{Thrm: th1}
 Let $\matr{z}$ be a k-dimensional random vector $[z_{1}, z_{2}, \ldots, z_{k}]^{\intercal}$ with a probability distribution function of the form
 \begin{equation}\label{Eqn: z_dist}
 \frac{\phi_{k}(\matr{z})f(\matr{z})}{\int \phi_{k}(\matr{z})f(\matr{z})d\matr{z}}
@@ -45,13 +45,20 @@ Therefore, the probability distribution $p(\matr{z}) = \phi_{n}(\matr{z})$ and t
 \begin{equation}
 p(\matr{z} | \matr{r}) = \frac{P(\matr{r} | \matr{z})p(\matr{z})}{P(\matr{r})} = \frac{\phi_{n}(\matr{z})f(\matr{z})}{\int \phi_{n}(\matr{z})f(\matr{z})d\matr{z}}
 \end{equation}
-The values of interest are $\matr{\mu}^{new}$ and $\matr{\Sigma}^{new}$, which is related to $E[\matr{z}]$ by
+and therefore by Theorem~\ref{Thrm: th1}, the values of interest $\mu_{i}^{new}$ and $\sigma_{i}^{new}$ are related to $E[z_{i}]$ through
+
 \begin{equation}
-\matr{\mu}^{new} = E[\matr{s}] = E[\matr{\mu} + \matr{\Sigma}\matr{z}] = \matr{\mu} + \matr{\Sigma}E[\matr{z}]
+\begin{split}
+\mu_{i}^{new} &= E[s_{i}] = E[\mu_{i} + \sigma_{i}z_{i}] = \mu_{i} + \sigma_{i}E[z_{i}] \\ 
+&= \mu_{i} + \sigma_{i}E\Big{[}\frac{\partial f(\matr{z}) / \partial z_{i}}{f(\matr{z})}\Big{]}
+\end{split}
 \end{equation}
 and
 \begin{equation}
-\matr{\Sigma}^{new} = Var[\matr{s}] = \matr{\Sigma}\matr{\Sigma}^{\intercal}Var[\matr{z}] = \matr{\Sigma}\matr{\Sigma}^{\intercal}E[(\matr{z} - E[\matr{z}])(\matr{z} - E[\matr{z}])^{\intercal}]
+\begin{split}
+\sigma_{i}^{new} &= Var[s_{i}] = \sigma_{i}^{2}Var[z_{i}] = \sigma_{i}^{2}(E[z_{i}^{2}] - E[z_{i}]^{2}) \\
+&= \sigma_{i}^{2}\Big{(}1 + E\Big{[}\frac{\nabla^{2} f(\matr{z})}{f(\matr{z})}\Big{]}_{ii} - E\Big{[}\frac{\partial f(\matr{z}) / \partial z_{i}}{f(\matr{z})}\Big{]}^{2}\Big{)}
+\end{split}
 \end{equation}
 
 \section{Implementation}\label{Sec: imp}
