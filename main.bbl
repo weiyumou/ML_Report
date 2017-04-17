@@ -1,0 +1,30 @@
+\newcommand{\noopsort}[1]{} \newcommand{\printfirst}[2]{#1}
+  \newcommand{\singleletter}[1]{#1} \newcommand{\switchargs}[2]{#2#1}
+\providecommand{\bysame}{\leavevmode\hbox to3em{\hrulefill}\thinspace}
+\providecommand{\MR}{\relax\ifhmode\unskip\space\fi MR }
+% \MRhref is called by the amsart/book/proc definition of \MR.
+\providecommand{\MRhref}[2]{%
+  \href{http://www.ams.org/mathscinet-getitem?mr=#1}{#2}
+}
+\providecommand{\href}[2]{#2}
+\begin{thebibliography}{1}
+
+\bibitem{KG16}
+Kaggle Inc., \emph{March machine learning mania 2016}, March 2016.
+
+\bibitem{NP17}
+Net Prophet, \emph{Exploring algorithms for predicting ncaa basketball games},
+  April 2017.
+
+\bibitem{NP15}
+Net Prophet\vspace{0mm}, \emph{Five mistakes kaggle competitors should avoid},
+  February 2015.
+
+\bibitem{NCAA17}
+Wikipedia, \emph{Ncaa division \rnum{1} men's basketball tournament}, April
+  2017.
+
+\bibitem{WIK17}
+Wikipedia\vspace{0mm}, \emph{Rating percentage index}, March 2017.
+
+\end{thebibliography}

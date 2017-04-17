@@ -1,0 +1,427 @@
+\chapter{Source Code}
+\section{Database Utilities}
+The source code listed in this section provides utility functions for general database operations, such as \textbf{select} and \textbf{update}. It is to be used in other modules. 
+
+\begin{lstlisting}[language = PHP, caption = {Database Utilities}, label = {AList:db_utilities}, frame=single, numbers=left, stepnumber=1]
+<?php
+include "../inc/jingodbinfo.inc";
+
+function connect_db(){
+    $conn = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD);
+    if($conn->connect_error){
+	die("Connection failed: " . $conn->connect_error);
+    }
+    $conn->select_db(DB_DATABASE);
+    $conn->set_charset("utf8");
+    return $conn;
+}
+
+function disconnect_db($conn){ $conn->close(); }
+
+function db_select($conn, $table, $cols, $cond = "true", $distinct = "")
+{
+    $sql_select = "SELECT {$distinct} ";
+    if(count($cols) == 0){
+        $sql_select .= "*,";
+    }
+    foreach ($cols as $col) {
+        $sql_select .= "{$col},";
+    }
+    $sql_select = rtrim($sql_select, ",");
+    $sql_select .= " FROM {$table} WHERE {$cond};";
+    $ret = $conn->query($sql_select);
+    $res = array();
+    if($ret->num_rows > 0){
+        while($row = $ret->fetch_assoc()){
+            $curr = array();
+            foreach ($cols as $col) {
+                $curr[$col] = $row[$col];
+            }
+            $res[] = $curr;
+	}
+    }
+    return $res;
+}
+
+function db_update($conn, $table, $values, $cond){
+    $sql_update = "UPDATE {$table} SET ";
+    foreach ($values as $key => $value) {
+        if(is_numeric($value)){
+            $sql_update .= "{$key} = {$value},";
+        }else{
+            $sql_update .= "{$key} = '{$value}',";
+        }
+    }
+    $sql_update = rtrim($sql_update, ",");
+    $sql_update .= " WHERE {$cond};";
+    $succ = $conn->query($sql_update);
+    return $succ;
+}
+
+function db_insert($conn, $table, $values, $cond = "", $ignore = ""){
+    $sql_insert = "INSERT {$ignore} INTO {$table} ";
+    $cols = "";
+    $vals = "";
+    foreach ($values as $key => $value) {
+        $cols .= "{$key},";
+        $vals .= (is_numeric($value) ? "{$value}," : "'{$value}',");
+    }
+    $cols = rtrim($cols, ",");
+    $vals = rtrim($vals, ",");
+    $sql_insert .= "({$cols}) VALUES ({$vals}) {$cond};";
+    echo "{$sql_insert}\n";
+    $conn->query($sql_insert);
+}
+
+function db_delete($conn, $table, $cond){
+    $sql_delete = "DELETE FROM {$table} WHERE {$cond};";
+}
+?>
+\end{lstlisting}
+
+\clearpage
+\newpage
+
+\section{Data Pre-processing}
+This section lists down the source code used in data pre-processing. 
+
+\begin{lstlisting}[language = PHP, caption = {Outlier Removal}, label = {AList:outlier_rmvl}, frame=single, numbers=left, stepnumber=1]
+<?php
+include "db_utilities.php";
+
+class Filter{
+    private $ldmk_start;
+    private $ldmk_end;
+    private $ldmk_table;
+    private $data_table;
+    private $update_table;
+    private $path;
+    private $bchmk;
+    
+    private $conn;
+    private $num_dele;
+    
+    public function __construct($ldmk_start, $ldmk_end, $ldmk_table, $data_table, $path, $bchmk, $update_table){
+        $this->ldmk_start = $ldmk_start;
+        $this->ldmk_end = $ldmk_end;
+        $this->ldmk_table = $ldmk_table;
+        $this->data_table = $data_table;
+        $this->update_table = $update_table;
+        $this->path = $path;
+        $this->bchmk = $bchmk;
+        $this->conn = connect_db();
+        $this->num_dele = 0;
+    }
+    
+    public function __destruct(){ disconnect_db($this->conn); }
+    
+    private function getCentres($ldmk){
+        $filename = "{$this->path}{$ldmk}.csv";
+        $centres = array();
+        if(($handle = fopen($filename, 'r')) !== FALSE){
+            while(($line = fgetcsv($handle, 0, ',')) !== FALSE){
+                $centres[] = array($line[0], $line[1]);
+            }
+	}
+	return $centres;
+    }
+    
+    private function getRecords($ldmk){
+        $ldmk_cols = array('LandmarkName');
+        $ldmk_cond = "LandmarkID = {$ldmk}";
+        $ret = db_select($this->conn, $this->ldmk_table, $ldmk_cols, $ldmk_cond);
+        $data_cols = array('DataUnitID', 'BD09_LONG', 'BD09_LAT');
+        $data_cond = "Street = '{$ret[0][$ldmk_cols[0]]}'";
+        $ret = db_select($this->conn, $this->data_table, $data_cols, $data_cond);
+        $records = array();
+        foreach ($ret as $item) {
+            $records[] = array($item[$data_cols[0]], $item[$data_cols[1]], $item[$data_cols[2]]);
+        }
+        return $records;
+    }
+    
+    
+    private function removeRecord($centres, $records){
+        foreach ($records as $recd) {
+            $min_dist = INF;
+            foreach ($centres as $centre) {
+                $min_dist = min($min_dist, $this->getHaversineDist
+                ($centre[0], $centre[1], $recd[1], $recd[2]));
+            }
+            if($min_dist > $this->bchmk){
+                $cond = "DataUnitID = {$recd[0]}";
+                db_delete($this->conn, $this->data_table, $cond);
+                ++$this->num_dele;
+            }
+	}
+    }
+    
+    private function toRadian($degree){ return $degree * M_PI / 180; }
+    
+    private function getHaversineDist($long1, $lat1, $long2, $lat2){
+        $BJ_LAT = $this->toRadian(39);
+        $EQ_R = 6378137; // equatorial radius in metres
+        $POL_R = 6356752; // polar radius in metres
+
+	$BJ_R = sqrt((pow($EQ_R * $EQ_R * cos($BJ_LAT), 2) + pow($POL_R * $POL_R * sin($BJ_LAT), 2)) / (pow($EQ_R * cos($BJ_LAT), 2) + pow($EQ_R * sin($BJ_LAT), 2)));
+	$long1 = $this->toRadian($long1);
+	$lat1 = $this->toRadian($lat1);
+	$long2 = $this->toRadian($long2);
+	$lat2 = $this->toRadian($lat2);
+	$d = 2 * $BJ_R * asin(sqrt(pow(sin(($lat1 - $lat2) / 2), 2) + 
+	cos($lat1) * cos($lat2) * pow(sin(($long1 - $long2) / 2), 2)));
+	return $d; }
+    private function getWithin($ldmk, $centres, $records){
+        foreach ($records as $recd) {
+	    $min_dist = INF;
+	    foreach ($centres as $centre) {
+	        $min_dist = min($min_dist, 
+		$this->getHaversineDist($centre[0], $centre[1], $recd[1], $recd[2]));
+	    }
+	    if($min_dist <= $this->bchmk){
+	        db_insert($this->conn, $this->update_table, 
+			array('LandmarkID' => $ldmk, 'BD09_LONG' => $recd[1], 'BD09_LAT' => $recd[2]));
+	    }
+	}
+    }
+    
+    public function doFiltering(){
+	for($ldmk = $this->ldmk_start; $ldmk != $this->ldmk_end; 
+		++$ldmk){
+	    $centres = $this->getCentres($ldmk);
+	    $records = $this->getRecords($ldmk);
+	    $this->getWithin($ldmk, $centres, $records);
+	}
+    }
+}
+set_time_limit(0);
+ini_set('memory_limit','2048M');
+$filter = new Filter($_POST['ldmk_start'], $_POST['ldmk_end'], 
+	$_POST['ldmk_table'], $_POST['data_table'], $_POST['path'], 
+	$_POST['bchmk'], $_POST['update_table']);
+$filter->doFiltering();
+?>
+\end{lstlisting}
+
+\section{Landmark Graph Construction}
+This section presents algorithms related to landmark graph construction. 
+\begin{lstlisting}[language = PHP, caption = {Trip Identification}, label = {AList:trip_identification}, frame=single, numbers=left, stepnumber=1]
+<?php
+include "db_utilities.php";
+
+class IdentifyTrip{
+    private $cuid_start;
+    private $cuid_end;
+    private $table;
+    private $tripid;
+    private $threshold;
+    private $occup;
+    private $conn;
+    
+    public function __construct($cuid_start, $cuid_end, $table, $tripid, $threshold, $occup){
+    	$this->cuid_start = $cuid_start;
+	$this->cuid_end = $cuid_end;
+	$this->table = $table;
+	$this->tripid = $tripid;
+	$this->threshold = $threshold;
+	$this->occup = $occup;
+	$this->conn = connect_db();
+    }
+    
+    public function __destruct(){ disconnect_db($this->conn); }
+
+
+
+    public function startIdentifyTrip(){
+    	$cols = array('DataUnitID', 'UnixEpoch');
+	for($cuid = $this->cuid_start; $cuid != $this->cuid_end; 
+		++$cuid){
+	    $cond = "CUID = {$cuid} and Occupied = {$this->occup}";
+	    $res = db_select($this->conn, $this->table, $cols, $cond);
+	    if(count($res) > 0){
+	        $this->splitTrip($res, $cols);
+	    }
+	}
+    }
+    
+    public function splitTrip($res, $cols){
+    	$last = $curr = $res[0][$cols[1]];
+	foreach ($res as $item) {
+	    $curr = $item[$cols[1]];
+	    if($curr - $last > $this->threshold){
+	    	++$this->tripid;
+	    }
+	    $values = array('TripID' => $this->tripid);
+	    $cond = "{$cols[0]} = {$item[$cols[0]]}";
+	    $succ = db_update($this->conn, $this->table, $values, 
+	    	$cond);
+	    $last = $curr;
+	}
+	++$this->tripid;
+    }
+}
+set_time_limit(0); ini_set('memory_limit','2048M');
+$identifyTrip = new IdentifyTrip($_POST['start'], $_POST['end'], $_POST['table'], $_POST['tripid'], $_POST['threshold'], $_POST['occup']);
+$identifyTrip->startIdentifyTrip();?>
+\end{lstlisting}
+
+\begin{lstlisting}[language = PHP, caption = {Landmark Frequency}, label = {AList:ldmk_frequency}, frame=single, numbers=left, stepnumber=1]
+<?php
+include "db_utilities.php";
+function insertLandmark($conn, $table, $landmark){
+    $values = array("LandmarkName" => $landmark, "LandmarkCount" => 1);
+    $cond = "ON DUPLICATE KEY UPDATE LandmarkCount = LandmarkCount + 1";
+    $succ = db_insert($conn, $table, $values, $cond);
+}
+function fetchLandmark($conn, $table, $tripid){
+    $cols = array("Street");
+    $cond = "TripID = {$tripid} group by Street";
+    $res = db_select($conn, $table, $cols, $cond);
+    $streets = array();
+    foreach ($res as $item) {
+	foreach ($item as $key => $value) {
+	    $streets[] = $value;
+	}
+    }
+    return $streets;
+}
+set_time_limit(0); ini_set('memory_limit','2048M');
+$conn = connect_db();
+$start = $_POST['tripid_start']; $end = $_POST['tripid_end'];
+$data_table = $_POST['dtable']; $landmark_table = $_POST['ltable'];
+for($tripid = $start; $tripid != $end; ++$tripid){
+    $landmarks = fetchLandmark($conn, $data_table, $tripid);
+    foreach ($landmarks as $ldmk) {
+  	$succ = insertLandmark($conn, $landmark_table, $ldmk);
+    }
+}
+disconnect_db($conn);?>
+\end{lstlisting}
+
+\begin{lstlisting}[language = PHP, caption = {Landmark Construction}, label = {AList:ldmk_construction}, frame=single, numbers=left, stepnumber=1]
+<?php
+include "db_utilities.php";
+
+class GraphBuilder{
+    private $start;
+    private $end;
+    private $ldmktable;
+    private $triptable;
+    private $ldmklimit;
+    private $holi_table;
+    private $wrkd_table;
+    private $conn;
+    private $landmarks;
+
+    public function __construct($start, $end, $ldmktable, $triptable, $ldmklimit, $holi_table, $wrkd_table){
+	$this->start = $start;
+	$this->end = $end;
+	$this->ldmktable = $ldmktable;	
+	$this->triptable = $triptable;
+	$this->ldmklimit = $ldmklimit;
+	$this->holi_table = $holi_table;
+	$this->wrkd_table = $wrkd_table;
+	$this->conn = connect_db();
+	$this->landmarks = $this->fetchldmk();
+    }
+
+    public function __destruct(){ disconnect_db($this->conn); }
+
+
+
+    private function fetchldmk(){
+        $cols = array('LandmarkName', 'LandmarkID');
+	$cond = "{$cols[1]} <= {$this->ldmklimit}";
+	$res = db_select($this->conn, $this->ldmktable, $cols, $cond);
+	$ldmks = array();
+	foreach ($res as $item) {
+	    $ldmks[$item[$cols[0]]] = $item[$cols[1]];
+	}
+	return $ldmks;
+    }
+
+    private function isLandmark($street){
+	return array_key_exists($street, $this->landmarks);
+    }
+
+    private function isHoliday($atime){
+	$date = date('d', $atime);
+	$day = date('w', $atime);
+	if($date == '01' || $date == '28' || $date == '29'){
+	    return true;
+	}else if($date == '31'){
+	    return false;
+	}else if($day == 0 || $day == 6){
+	    return true;
+	}
+	return false;
+    }
+
+
+
+
+
+    public function buildGraph(){
+	$street_cols = array("Street");
+	$utc_cols = array("UnixEpoch");
+		
+	for($tripid = $this->start; $tripid != $this->end; ++$tripid){
+	    $street_utc = array();
+	    $street_cond = "TripID = {$tripid}";
+	    $streets = db_select($this->conn, $this->triptable, $street_cols, $street_cond, "DISTINCT");
+	    foreach ($streets as $item) {
+		$street = $item[$street_cols[0]];
+		$utc_cond = "{$street_cols[0]} = '{$street}' AND {$street_cond} LIMIT 1";
+		$ret = db_select($this->conn, $this->triptable, $utc_cols, $utc_cond);
+		if(count($ret) > 0){
+		    $street_utc[$street] = $ret[0][$utc_cols[0]];
+		}
+	    }
+	    $this->addEdge($street_utc, $tripid);
+	 }
+     }
+     
+    private function addEdge($street_utc, $tripid){
+	$cols = array("LandmarkU", "Intermediate", "LandmarkV", "ArrivalTime", "LeavingTime", "Duration", "TripID");
+	$streets = array_keys($street_utc);
+	$size = count($streets);
+	$low = 0;
+	while($low < $size && !$this->isLandmark($streets[$low])){
+	    ++$low;
+	}
+	$landmarkU = $landmarkV = $low < $size ? $streets[$low] : NULL;
+	$atime = $ltime = $low < $size ? $street_utc[$landmarkV] : NULL;
+	++$low;
+	while($low < $size){
+	    $inbetween = "";
+	    while($low < $size && !$this->isLandmark($streets[$low])){
+		$inbetween .= "{$streets[$low]}-";
+		++$low;
+	    }
+	    $inbetween = rtrim($inbetween, "-");
+	    $landmarkV = $low < $size ? $streets[$low] : NULL;
+	    $ltime = $low < $size ? $street_utc[$landmarkV] : NULL;
+	    if(!is_null($landmarkU) && !is_null($landmarkV)){
+		$vals = array($landmarkU, $inbetween, $landmarkV, $atime, $ltime, $ltime - $atime, $tripid);
+		if($this->isHoliday($atime)){
+		    db_insert($this->conn, $this->holi_table, array_combine($cols, $vals));
+		}else{
+		    db_insert($this->conn, $this->wrkd_table, array_combine($cols, $vals));
+		}
+	     }
+	     $landmarkU = $landmarkV;
+	     $atime = $ltime;
+	     ++$low;
+	}
+    }
+}
+
+set_time_limit(0);
+ini_set('memory_limit','2048M');
+date_default_timezone_set("Asia/Singapore");
+
+$graphBuilder = new GraphBuilder($_POST['tripid_start'], $_POST['tripid_end'], $_POST['ldmktable'], $_POST['triptable'], $_POST['ldmklimit'], $_POST['holi_table'], $_POST['wrkd_table']);
+
+$graphBuilder->buildGraph();
+?>
+\end{lstlisting}

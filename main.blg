@@ -1,0 +1,64 @@
+This is BibTeX, Version 0.99d (TeX Live 2016)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: main.aux
+A level-1 auxiliary file: cover.aux
+A level-1 auxiliary file: contents.aux
+A level-1 auxiliary file: chap1.aux
+A level-1 auxiliary file: chap2.aux
+A level-1 auxiliary file: chap3.aux
+A level-1 auxiliary file: chap4.aux
+A level-1 auxiliary file: biblio.aux
+The style file: amsplain.bst
+Database file #1: main.bib
+Warning--entry type for "NCAA17" isn't style-file defined
+--line 17 of file main.bib
+Warning--entry type for "WIK17" isn't style-file defined
+--line 28 of file main.bib
+Warning--entry type for "NP17" isn't style-file defined
+--line 38 of file main.bib
+Warning--entry type for "NP15" isn't style-file defined
+--line 48 of file main.bib
+Warning--entry type for "KG16" isn't style-file defined
+--line 58 of file main.bib
+You've used 5 entries,
+            2213 wiz_defined-function locations,
+            529 strings with 4435 characters,
+and the built_in function-call counts, 1076 in all, are:
+= -- 80
+> -- 35
+< -- 0
++ -- 15
+- -- 10
+* -- 57
+:= -- 169
+add.period$ -- 5
+call.type$ -- 5
+change.case$ -- 20
+chr.to.int$ -- 0
+cite$ -- 5
+duplicate$ -- 55
+empty$ -- 121
+format.name$ -- 10
+if$ -- 226
+int.to.chr$ -- 0
+int.to.str$ -- 5
+missing$ -- 5
+newline$ -- 26
+num.names$ -- 10
+pop$ -- 55
+preamble$ -- 2
+purify$ -- 15
+quote$ -- 0
+skip$ -- 34
+stack$ -- 0
+substring$ -- 25
+swap$ -- 5
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 20
+warning$ -- 0
+while$ -- 10
+width$ -- 6
+write$ -- 45
+(There were 5 warnings)
