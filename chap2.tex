@@ -3,9 +3,6 @@
 \section{Challenges}
 
 In the attempt to tackle the problem, various challenges arise that are worth mentioning.
-%\subsection{Feature Selection}
-%
-%As mentioned in Section~\ref{Sec:data_set}, Kaggle provides a comprehensive set of various data which might be useful for us. However, we have to choose the features that satisfy the two criteria of usefulness and relevance to tackle this problem.
 
 \subsection{Feature Selection}
 
@@ -32,11 +29,10 @@ Numot & The number of overtime periods in the game \\ \hline
 \caption{A Summary of the Basic Features}\label{Ta:basic_feature}
 \end{table}
 
-The additional features describe both \emph{offensive} and \emph{defensive} strengths of both winning team and losing team. Table~\ref{Ta:offensive_feature} gives a summary of features describing offensive strengths, while Table~\ref{Ta:defensive_feature} focuses on defensive strengths. Although the two tables list features from the winning team's perspective, another duplicated set of features also exist for the losing team. 
+The additional features describe both \emph{offensive} and \emph{defensive} strengths of both winning team and losing team. Table~\ref{Ta:offensive_feature} gives a summary of features describing offensive strengths, while Table~\ref{Ta:defensive_feature} focuses on defensive strengths. Although the two tables list features from the winning team's perspective, another duplicated set of features also exists for the losing team. 
 
 \begin{table}[h!]
 \centering
-%\resizebox{\columnwidth}{!}{
 \begin{tabular}{ | l | l | }
 \hline
 \textbf{Feature} & \textbf{Description} \\ \hline
@@ -48,13 +44,11 @@ Wast & The number of assists by the winning team \\ \hline
 Wstl & The number of steals by the winning team \\ \hline
 Wblk & The number of blocks by the winning team \\ \hline
 \end{tabular}
-%}
 \caption{A Summary of the Offensive Features}\label{Ta:offensive_feature}
 \end{table}
 
 \begin{table}[h!]
 \centering
-%\resizebox{\columnwidth}{!}{
 \begin{tabular}{ | l | l | }
 \hline
 \textbf{Feature} & \textbf{Description} \\ \hline
@@ -63,13 +57,18 @@ Wfga3 & The number of three pointers attempted by the winning team\\ \hline
 Wfta & The number of free throws attempted by the winning team\\ \hline
 Wdr & The number of defensive rebounds by the winning team \\ \hline
 \end{tabular}
-%}
 \caption{A Summary of the Defensive Features}\label{Ta:defensive_feature}
 \end{table}
 
-\subsection{Complex Interrelationship}
+The potentially many features make model selection challenging, because they create an exponential number of possible models. If a feature has $m$ possible values, to select the best models based on $n$ features, at least $\Theta(n^{m})$ models have to be examined, which is impractical given that only one submission is allowed at one time. Therefore, this project uses a greedy strategy where all other features are fixed at their optimal values when one feature varies to select a suboptimal model. 
 
-No team is in isolation. The tournament matches are interactive processes whereby complex interrelationships exist amongst all the contesting teams, which adds another layer of complication in the attempt to predict match results. For example, given the history match records that Team A beaten Team B and Team C lost to Team B, one should intuitively conclude that Team A should have a higher probability of beating Team C. But what if another record shows that Team A once lost to Team C? In that case, the relative strength levels of the three teams will be hard to determine. Moreover, the match whose result is to be predicted may be the very \emph{first} match ever between two teams. In other words, there are no historical records that give a direct assessment on the two teams' strengths. Such lack of knowledge must be complemented by some interrelationships amongst the teams. So a good predictive model should not only be able to take into consideration the current game record, but also explore the interrelationships amongst all the game records and generalise on unseen matches. 
+\subsection{Interrelationship}
+
+No team is in isolation. The tournament matches are interactive processes whereby complex interrelationships exist amongst all the contesting teams, which adds another layer of complication in the attempt to predict match results. For example, given the history match records that Team A beaten Team B and Team C lost to Team B, one should intuitively conclude that Team A should have a higher probability of beating Team C. But what if another record shows that Team A once lost to Team C? In that case, the relative strength levels of the three teams will be hard to determine based purely on that intuition. Moreover, the match whose result is to be predicted may be the very \emph{first} match ever between two teams. In other words, there are no historical records that give a direct assessment on the two teams' relative strengths. Such lack of knowledge must be complemented by some forms of inference based on the interrelationships amongst the teams. So a good predictive model should not only be able to take into consideration the current game record, but also explore the interrelationships amongst all the game records and generalise on unseen matches. 
 
 \subsection{The Curse of Model Popularity}
+The problem to solve can be categorised as a classification problem under supervised learning. But since the final answers to be submitted are in fact \emph{probabilities}, non-probabilistic models like support vector machines will hardly work. Therefore, the first a few models attempted in this project include the most popular ones: logistic regression and multilayer perceptrons. 
 
+The inputs to these popular models are the seed positions of each team, since the seeds represent an official view on the relative strength of each team. However, the performances of these models are not as good as expected: the logistic model only gives a \nth{283} position on the leaderboard. Moreover, only teams in a tournament are assigned a seed but the number of tournament matches is not large enough to support accurate predictions. Although~\cite{PJ06} suggests a combination of logistic regression and Markov chain to predict match outcomes, these popular models alone based on simply seeds are unlikely to give a good result. 
+
+\section{Approach}
