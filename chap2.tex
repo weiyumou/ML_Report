@@ -72,3 +72,47 @@ The problem to solve can be categorised as a classification problem under superv
 The inputs to these popular models are the seed positions of each team, since the seeds represent an official view on the relative strength of each team. However, the performances of these models are not as good as expected: the logistic model only gives a \nth{283} position on the leaderboard. Moreover, only teams in a tournament are assigned a seed but the number of tournament matches is not large enough to support accurate predictions. Although~\cite{PJ06} suggests a combination of logistic regression and Markov chain to predict match outcomes, these popular models alone based on simply seeds are unlikely to give a good result. 
 
 \section{Approach}
+In light of the challenges identified, the general approach is to quantitatively describe the \emph{skill} of each team, from which the winning probabilities are derived. This section gives a rough idea about the approach used in this project, while the detailed mathematical principles are left to Chapter~\ref{}. 
+
+The system used to estimate the skill of a team is known as a \emph{rating system}. An example of a rating system is the famous Elo rating system widely applied in board games like chess and Go. In a Gaussian rating system, each team $i$ is assumed to have a skill $s_{i}$ that follows a Gaussian distribution $s_{i} \sim \mathcal{N}(\mu_{i}, \sigma_{i}^{2})$, where $\mu_{i}$ is the mean skill of a team and $\sigma_{i}$ can be considered as the system's \emph{belief} about the team's skill level. 
+
+Depending on the rating system, the skill of a team is updated after a single match or a series of matches within a specific period. The amount of such a update depends on how \emph{surprising} a match outcome is --- if, prior to a match, Team A is expected to have a very high probability of beating Team B based on their \emph{skill gap}, an outcome that Team A actually wins the game will \emph{not} result in a significant update on either Team A's or Team B's skill; however, on the other hand, if it turns out that Team B performs superbly and beats Team A at the end of the match despite its lower skill level, which is known as an ``upset'' in sport term, there \emph{will} be a significant increase in Team B's skill and a significant decrease in Team A's skill. But in either case, the belief of skills $\sigma_{i}$ will shrink because the rating system becomes more confident about the two teams' skill level. 
+
+As an example, suppose two teams have the same initial skill estimates of $s_{i}$ and $s_{j}$ respectively as shown in Figure~\ref{Fig:t_0}. As the tournament begins, $s_{i}$ and $s_{j}$ are adjusted according to the outcomes of the matches, which is represented by the shift of skill curves as shown in Figure~\ref{Fig:t_1} and~\ref{Fig:t_2}. In the meanwhile, the skill curves become increasingly \emph{taller}, indicating that the rating system is increasingly confident about their skill levels. Finally when the tournament ends, the rating system reports the final standings of the two teams as shown in Figure~\ref{Fig:t_3}.
+\begin{figure}[h!]
+
+\begin{subfigure}{.5\textwidth}
+\centering
+\includegraphics[width = .9\linewidth]{0}
+\caption{Timestamp $t = 0$}
+\label{Fig:t_0}
+\end{subfigure}
+\begin{subfigure}{.5\textwidth}
+\centering
+\includegraphics[width = .9\linewidth]{12}
+\caption{Timestamp $t = 1$}
+\label{Fig:t_1}
+\end{subfigure}
+
+\begin{subfigure}{.5\textwidth}
+\centering
+\includegraphics[width = .9\linewidth]{24}
+\caption{Timestamp $t = 2$}
+\label{Fig:t_2}
+\end{subfigure}
+\begin{subfigure}{.5\textwidth}
+\centering
+\includegraphics[width = .9\linewidth]{36}
+\caption{Timestamp $t = 3$}
+\label{Fig:t_3}
+\end{subfigure}
+
+\caption{An Example of Skill Update}
+\label{Fig:skill_update}
+\end{figure}
+
+A team's probability of beating another team in an \emph{upcoming} match can be estimated from the two teams' skill difference. 
+\begin{equation}
+P(s_{i} > s_{j}) = \Phi(\frac{\mu_{i} - \mu_{j}}{\sqrt{\sigma_{i}^{2} + \sigma_{j}^{2}}})
+\end{equation}
+where $\Phi$ is the cumulative distribution function of a standard Gaussian distribution.
