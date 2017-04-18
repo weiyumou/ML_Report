@@ -7,7 +7,7 @@
   \href{http://www.ams.org/mathscinet-getitem?mr=#1}{#2}
 }
 \providecommand{\href}[2]{#2}
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
 
 \bibitem{RC11}
 Ruby C.Weng and Chih-Jen Lin, \emph{A bayesian approximation method for online
@@ -24,6 +24,11 @@ Ralf Herbrich, Tom Minka, and Thore Graepel, \emph{Trueskill(tm): A bayesian
 \bibitem{KG16}
 Kaggle Inc., \emph{March machine learning mania 2016},
   \url{https://www.kaggle.com/c/march-machine-learning-mania-2016}, March 2016.
+
+\bibitem{WR17}
+Wolfram~Research Inc., \emph{Normal difference distribution},
+  \url{http://mathworld.wolfram.com/NormalDifferenceDistribution.html}, April
+  2017.
 
 \bibitem{PJ06}
 Paul Kvam and Joel~S. Sokol, \emph{A logistic regression/markov chain model for

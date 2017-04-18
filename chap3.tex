@@ -3,7 +3,7 @@ TrueSkill~\cite{TS07} is a Gaussian rating system developed by Microsoft Researc
 
 \section{Approximate Bayesian Inference}\label{Sec: tmm}
 
-The approach described in Section~\ref{Sec: approach} can be modelled as a Bayesian Inference process. Define a vector $\matr{s}  = [s_{1}, s_{2}, \ldots, s_{n}]^{\intercal}$ representing the individual \emph{skill} of $n$ teams in a match (in the case of NCAA basketball tournament, $n = 2$). Further assume that each skill follows a Gaussian distribution $s_{i} \sim \mathcal{N}(\mu_{i}, \sigma_{i}^{2})$ and collectively, the \emph{prior} joint distribution of skills is a n-variate Gaussian distribution $p(\matr{s}) = \mathcal{N}_{n}(\matr{s}; \matr{\mu}, \matr{\Sigma})$
+The approach described in Section~\ref{Sec: approach} can be modelled as a Bayesian Inference process. Define a vector $\matr{s}  = [s_{1}, s_{2}, \ldots, s_{n}]^{\intercal}$ representing the individual \emph{skill} of $n$ teams in a match (in the case of NCAA basketball tournament, $n = 2$). Further assume that each skill follows a Gaussian distribution $s_{i} \sim \mathcal{N}(\mu_{i}, \sigma_{i}^{2})$ and collectively, the \emph{prior} joint distribution of skills is a n-variate Gaussian distribution $p(\matr{s}) = \mathcal{N}_{n}(\matr{s}; \matr{\mu}, \matr{\Sigma})$.
 
 In a match, each team is expected to exhibit a certain \emph{performance} $p_{i} \sim \mathcal{N}(s_{i}, \beta_{i}^{2})$ that varies around its skill. The match result can be represented as a set of rankings in ascending order for each team, namely, $\matr{r} = [r_{1}, r_{2}, \ldots, r_{n}]^{\intercal}$ where $r_{1} \leq r_{2}, \ldots, r_{n - 1} \leq r_{n}$. In reality, there are many factors that may affect the outcome of a match, but for the purpose of Bayesian Inference, the assumption is that it is the differences in team performances that cause the differences in team rankings. According to the Bayes' Theorem, the posterior distribution $p(\matr{s} | \matr{r})$ is given by
 \begin{equation}\label{Eqn: bayes}
@@ -47,18 +47,53 @@ p(\matr{z} | \matr{r}) = \frac{P(\matr{r} | \matr{z})p(\matr{z})}{P(\matr{r})} =
 \end{equation}
 and therefore by Theorem~\ref{Thrm: th1}, the values of interest $\mu_{i}^{new}$ and $\sigma_{i}^{new}$ are related to $E[z_{i}]$ through
 
-\begin{equation}
+\begin{equation}\label{Eqn: mu_update}
 \begin{split}
 \mu_{i}^{new} &= E[s_{i}] = E[\mu_{i} + \sigma_{i}z_{i}] = \mu_{i} + \sigma_{i}E[z_{i}] \\ 
 &= \mu_{i} + \sigma_{i}E\Big{[}\frac{\partial f(\matr{z}) / \partial z_{i}}{f(\matr{z})}\Big{]}
 \end{split}
 \end{equation}
 and
-\begin{equation}
+\begin{equation}\label{Eqn: sigma_update}
 \begin{split}
 \sigma_{i}^{new} &= Var[s_{i}] = \sigma_{i}^{2}Var[z_{i}] = \sigma_{i}^{2}(E[z_{i}^{2}] - E[z_{i}]^{2}) \\
 &= \sigma_{i}^{2}\Big{(}1 + E\Big{[}\frac{\nabla^{2} f(\matr{z})}{f(\matr{z})}\Big{]}_{ii} - E\Big{[}\frac{\partial f(\matr{z}) / \partial z_{i}}{f(\matr{z})}\Big{]}^{2}\Big{)}
 \end{split}
+\end{equation}
+
+The above update equations are applicable to the general cases where $n$ teams are involved. However, for NCAA tournament matches that are between only two teams, a simpler version of the update equation can be derived. Now consider two teams with skill $\matr{s} = [s_{i}, s_{j}]^{\intercal}$. In general, there is no draw in basketball matches, but for completeness, assume the \emph{draw margin} is $\varepsilon$ such that team $i$ beats team $j$ when $s_{i} - s_{j} > \varepsilon$ and the outcome is considered as draw when $| s_{i} - s_{j} | \leq \varepsilon$. Furthermore, define $c^{2} = 2\beta^{2} + \sigma_{i}^{2} + \sigma_{j}^{2}$. Then 
+\begin{equation}
+f(\matr{z}) = \Phi \Big{(} \frac{\mu_{i} - \mu_{j} - \varepsilon}{c}  \Big{)}
+\end{equation}
+when team $i$ beats team $j$. Alternatively, 
+\begin{equation}
+f(\matr{z}) = \Phi \Big{(} \frac{\varepsilon - (\mu_{i} - \mu_{j}) }{c}  \Big{)} - \Phi \Big{(} \frac{- \varepsilon - (\mu_{i} - \mu_{j}) }{c}  \Big{)}
+\end{equation}
+when team $i$ draws with team$j$. In both cases, $\Phi$ represents the standard Gaussian cumulative distribution function. 
+
+Another approximation applied above is to assume $\matr{z} = \matr{0}$, namely, the two teams are assumed to have skills that are equal to their mean skills ($\matr{s} = \matr{\mu}$). The rationale for the above equations is to construct a Gaussian difference distribution~\cite{WR17} $\mathcal{N}_{i - j}(s_{i - j}; \mu_{i} - \mu_{j}, c^{2})$ considering the performance variance $\beta^{2}$. Then for the case that team $i$ beats team $j$, it is to calculate the probability that $\mu_{i} - \mu_{j} - \varepsilon > 0$ using a standard Gaussian $\Phi$ function. Similar arguments apply to the draw case. 
+
+Now that $f(\matr{z})$ is known, for the case team $i$ beats team $j$
+\begin{equation}
+\begin{split}
+\frac{\partial f(\matr{z})}{\partial z_{i}} &= \frac{\partial f(\matr{z})}{\partial \mu_{i}} \cdot \frac{\partial \mu_{i}}{\partial z_{i}} = \sigma_{i}\frac{\partial}{\partial \mu_{i}}\Phi \Big{(} \frac{\mu_{i} - \mu_{j} - \varepsilon}{c}  \Big{)} \\
+&= \frac{\sigma_{i}}{c} \phi \Big{(} \frac{\mu_{i} - \mu_{j} - \varepsilon}{c}  \Big{)}
+\end{split}
+\end{equation}
+where $\phi$ is the standard Gaussian probability density function. Following Equation~\ref{Eqn: mu_update} and~\ref{Eqn: sigma_update} , the skill of team $i$ can be updated accordingly:
+\begin{equation}
+\mu_{i}^{new} = \mu_{i} + \frac{\sigma_{i}^{2}}{c} \cdot \frac{\phi \Big{(} \frac{\mu_{i} - \mu_{j} - \varepsilon}{c}  \Big{)}}{\Phi \Big{(} \frac{\mu_{i} - \mu_{j} - \varepsilon}{c}  \Big{)}}
+\end{equation}
+\begin{equation}
+\sigma_{i}^{new} = \sigma_{i}^{2} 
+\Bigg{\{} 
+1 + \frac{\sigma_{i}^{2}}{c} 
+\Bigg{[} 
+-\frac{\mu_{i} - \mu_{j} - \varepsilon}{c^{2}} \cdot \frac{\phi \Big{(} \frac{\mu_{i} - \mu_{j} - \varepsilon}{c}  \Big{)}}{\Phi \Big{(} \frac{\mu_{i} - \mu_{j} - \varepsilon}{c}  \Big{)}}
+-\frac{1}{c} \cdot  \frac{\phi \Big{(} \frac{\mu_{i} - \mu_{j} - \varepsilon}{c}  \Big{)}^{2}}{\Phi \Big{(} \frac{\mu_{i} - \mu_{j} - \varepsilon}{c}
+ \Big{)}^{2}}
+\Bigg{]}
+\Bigg{\}}
 \end{equation}
 
 \section{Implementation}\label{Sec: imp}
