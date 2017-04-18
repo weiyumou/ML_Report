@@ -17,7 +17,7 @@ A number of approximation techniques are available. For the TrueSkill rating sys
 \begin{figure}[h!]
 \includegraphics[scale=0.5]{factor_graph}
 \centering
-\caption{An example of factor graph}\label{Fig:fact_grph}
+\caption{An Example of a Factor Graph}\label{Fig:fact_grph}
 \end{figure}
 
 The ultimate goal of a factor graph is to obtain a set of update equations that indicate how each $\mu_{i}$ and $\sigma_{i}$ should be updated. However, passing messages throughout larger factor graphs can involve very intensive computations. As suggested by~\cite{RC11}, there is an alternative but easier way of getting the same set of update equations based the following theorem. 
@@ -120,7 +120,7 @@ Wloc & Identifies whether HCA exists \\ \hline
 Numot & The more overtimes, the smaller the skill gap \\ \hline
 Wto & The less turnovers, the stronger the skill \\ \hline
 \end{tabular}
-\caption{A Summary of the Selected Features and Effectives}\label{Ta:sele_feature}
+\caption{A Summary of the Selected Features and Effects}\label{Ta:sele_feature}
 \end{table}
 
 A larger MOV may be a good indicator of a larger skill gap between the winning team and the losing team. In this project, the effect of MOV is added iteratively: as long as the MOV is larger than some threshold value $m$, the match is considered a victory for the winning team and fed to TrueSkill, after which the MOV is deducted by $m$ and the process continues until MOV $<m$. Therefore, it is possible that an actual match is treated as \emph{multiple} victories because the match has a very large MOV. Although TrueSkill does not consider MOV, the \emph{number} of victories does matter in TrueSkill. 
@@ -129,32 +129,36 @@ Occasionally, there is overtime in a basketball match if two teams tie at the en
 
 Turnovers can be thought as mistakes a team made in a match. There are many possible factors from both the team and its opponents that can cause turnovers, such as a double dribble or the ball being stolen. Therefore, it is a very comprehensive feature that may contain information from many other invisible factors. In this project, if a team commits more turnovers than its opponents', then its final score will be deducted by some variable amounts. 
 
-Table~\ref{Ta:results} summaries all the models built in this project and their respective ranks on Kaggle's leaderboard. 
-
 \begin{table}[h!]
 \centering
 \begin{tabular}{ | l | l | l | l | l |}
 \hline
 \textbf{Model No.} & \textbf{Feature Used} & \textbf{LogLoss} & \textbf{Rank} & \textbf{Top} \\ \hline
-1 & Na\"{i}ve TrueSkill & 0.531040 & \nth{13} & 2.17\% \\ \hline
+1 & Match Outcome & 0.531040 & \nth{13} & 2.17\% \\ \hline
 2 & MOV & 0.538214 & \nth{34} & 5.68\% \\ \hline
 3 & HCA & 0.513445 & \nth{5} & 0.83\%\\ \hline
 4 & Overtime & 0.514140 & \nth{5} & 0.83\% \\ \hline
 5 & Turnover  & 0.503654 & \nth{3} & 0.50\%\\ \hline
 \end{tabular}
-\caption{A summary of the final results}\label{Ta:results}
+\caption{A summary of the Final Results (Without Fine-tuning)}\label{Ta:results}
 \end{table}
+
+Table~\ref{Ta:results} summaries all the models built in this project and their respective ranks on Kaggle's leaderboard. Model 1 is built upon the bare TrueSkill rating system without any additional features other than the match outcomes. Model 2 incorporates MOV, but the performance becomes worse, indicating that the original intuition about MOV may not be correct; therefore, MOV is dropped from all subsequent models. From Model 3 onwards, all models are built upon their preceding models --- for example, Model 3 is a `subclass' of Model 1. The best model gives a \nth{3} rank on Kaggle's leaderboard. 
+
+A possible technique to slightly boost the leaderboard performance is to convert any probabilities close enough to 1 into 1 and convert any probabilities close enough to 0 into 0. For example, a probability of 0.98 may be set to 1. The rationale for this technique is that, when TrueSkill is very confident about the result of a match (by producing a probability close enough to either 0 or 1), it is reasonable to assume the prediction \emph{will be} the actual result of the match. And when the converted prediction \emph{does} match the final outcome, TrueSkill receives zero errors based on the LogLoss evaluation. 
+
+Table~\ref{Ta:results_ft} shows the leaderboard performances after this fine-tuning technique is applied on every model. The two thresholds are set to 0.1 and 0.9, namely when a probability $p < 0.1$ or $p > 0.9$ it will be converted into 0 or 1, respectively. It can be observed that the first two models get unexpected bad results, whereas performance boosts can be found in other models. This experiment possibly reveals an important limitation of this technique: it only works when TrueSkill \emph{does} produce a fairly accurate set of underlying predictions. Prior to the fine-tuning exercise, the last three models have already achieved good ranks on the leaderboard, which indicates that their underlying predictions are largely accurate. However, that is not the case for Model 1 and 2, because they have never achieved good enough ranks before the technique is applied. 
 
 \begin{table}[h!]
 \centering
 \begin{tabular}{ | l | l | l | l | l |}
 \hline
 \textbf{Model No.} & \textbf{Feature Used} & \textbf{LogLoss} & \textbf{Rank} & \textbf{Top} \\ \hline
-1 & Na\"{i}ve TrueSkill & 1.542861 & \nth{585} & 97.66\% \\ \hline
+1 & Match Outcome & 1.542861 & \nth{585} & 97.66\% \\ \hline
 2 & MOV & 2.046105 & \nth{593} & 99.00\% \\ \hline
 3 & HCA & 0.505484 & \nth{3} & 0.50\%\\ \hline
 4 & Overtime & 0.504135 & \nth{3} & 0.50\% \\ \hline
 5 & Turnover  & 0.493128 & \nth{2} & 0.33\%\\ \hline
 \end{tabular}
-\caption{A summary of the final results}\label{Ta:results_ft}
+\caption{A summary of the Final Results (With Fine-tuning)}\label{Ta:results_ft}
 \end{table}

@@ -1,10 +1,12 @@
 \chapter{Introduction}
 The National Collegiate Athletic Association (NCAA) Division \rnum{1} Men's Basketball Tournament is one of the most popular annual sport festivities in the United States. Every year, the Tournament attracts a sizeable pool of audience, with the national champion becoming one of the hottest topics throughout the whole year. In the meanwhile, interests in predicting the winning team of a particular tournament match are escalating~\cite{NP17} and online machine-learning communities like Kaggle are organising annual competitions to encourage creative solutions for predicting match outcomes. The purpose of this project is to present a feasible machine learning-based solution to Kaggle's competition ``March Machine Learning Mania 2016''~\cite{KG16} that accurately predicts a team's \emph{probability} of winning a particular tournament match based on historical match data provided by Kaggle. 
 
+Chapter~\ref{Chap:2} identifies the challenges in solving the problem and describes the general approach adopted in this project. Chapter~\ref{Chap:3} continues with a detailed discussion about Approximate Bayesian Inference, upon which the ultimate solution `TrueSkill' is built, and presents the Kaggle leaderboard performances of several predictive models. Finally, Chapter~\ref{Chap:4} concludes this report by discussing possible improvements on the models in the future and what has be learned from this project. 
+
 \section{Background}
 According to Wikipedia~\cite{NCAA17}, the Tournament is played during every March and April based on the rule of single-elimination. Out of the 68 participating college basketball teams, 32 \emph{conference} match champions are automatically qualified for the Tournament, while the other 36 teams are admitted at the discretion of a NCAA selection committee based on a criterion known as Rating Percentage Index~\cite{WIK17}.
 
-The total 68 teams are then ranked by the selection committee from 1 to 68, and distributed amongst the four regions nominally known as East, West, South and Midwest. The top four teams receiving a rank from 1 to 4 are distributed to and given a \emph{seed} of 1 in each of the four regions, followed by the next four teams with a rank of 5-8 that receive a seed of 2 in each region. The process continues until only the last eight teams are left whereby they have to fight with one of the other teams for the \nth{16} seed position for each region, which marks the commencement of the Tournament and is officially known as the \emph{First Four} round. 
+The total 68 teams are then ranked by the selection committee from 1 to 68, and distributed amongst the four regions nominally known as East, West, South and Midwest. The top four teams receiving a rank from 1 to 4 are distributed to and given a \emph{seed} of 1 in each of the four regions, followed by the next four teams with a rank of 5-8 that receive a seed of 2 in each region. The process continues until only the last eight teams are left whereby they have to fight with one of the other teams for the \nth{16} seed position in each region, which marks the commencement of the Tournament and is officially known as the \emph{First Four} round. 
 
 At this point, the number of contesting teams are reduced to 64. During the next \emph{First Round} in each region, a team with a higher seed position plays against a team with a lower seed position. For example, there are matchups between teams with the \nth{1} seed and teams with the \nth{16} seed, between the \nth{2} seed teams and the \nth{15} seed teams and so on. Subsequently, the 32 winning teams advance to the \emph{Second Round} where they play against one of the other teams, after which the 16 remaining teams are known as the \emph{Sweet Sixteen}. 
 
@@ -60,33 +62,3 @@ TourneySlots & The pair-ups between two teams based on their seeds  \\ \hline
 \end{tabular}}
 \caption{A Summary of the Data Sets}\label{Ta:data_set}
 \end{table}
-
-However, not all data sets are useful. Only two of them are used in this project, namely \textbf{RegularSeasonCompactResults} and \textbf{Teams}. 
-
-\section{Role Assignment}
-Table~\ref{Ta:role_assgn} shows the assignment of roles for each team member in this project. 
-\begin{table}[h!]
-\centering
-%\resizebox{\columnwidth}{!}{
-\begin{tabular}{ | l | l | l | }
-\hline
-\textbf{Team member} & \textbf{Role} & \textbf{Responsibility} \\ \hline
-Joe Tan Chin Yong & Data Scientist & To build predictive models \\ \hline
-Liu Zeyan & Data Analyst & To optimise selected models \\ \hline
-Wei Yumou & Data Scientist & To build predictive models \\ \hline
-Xie Dai & Statistician & To provide mathematical knowledge  \\ \hline
-\end{tabular}
-%}
-\caption{Role Assignment}\label{Ta:role_assgn}
-\end{table}
-
-
-%2.0 DATASET
-%
-%We use three datasets in this project:
-%
-%2.1 RegularSeasonDetailedResults.csv
-%
-%This file identifies the game-by- game results for 13 seasons of historical data, from 2003 to 2015. Each year, it includes all games played from daynum 0 through 132.
-%
-%Each row in the file represents a single game played. It includes team-level total statistics for each game. We use the data from 2013 to 2015 as only the recent data is relevant to our prediction.

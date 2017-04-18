@@ -462,6 +462,8 @@ reserved.\par\permission}}
 %\par
 %\@prevdegrees
 %\par
+\choosecase{\textbf{Best Kaggle Score: 0.503654, \nth{3} Place}}
+\par
 \choosecase{Submitted in Fulfilment of the Coursework Requirements\\
 for the} 
 %\choosecase{\@department} \\
@@ -469,7 +471,7 @@ for the}
 %\choosecase{\@degreeword} 
 %\choosecase{of}
 %\par
-\choosecase{\@degree\\}
+\choosecase{\@degree}
 %\choosecase{of the}
 %\choosecase{\Mit}
 \par
