@@ -98,4 +98,63 @@ where $\phi$ is the standard Gaussian probability density function. Following Eq
 
 Detailed derivations are omitted and can be found in~\cite{RC11}. Update equations for team $j$ and for the case of draw can be derived in a similar way. By means of Approximate Bayesian Inference, the TrueSkill rating system is able to update the skill of each team upon the end of a match and to estimate a team's probability of winning an upcoming match. 
 
-\section{Results \& Discussions}\label{Sec: imp}
+\section{Kaggle Results \& Discussions}\label{Sec: imp}
+
+Section~\ref{SSec: features} lists many potential features that can be used as inputs to a predictive model. However, the required inputs to a TrueSkill rating system are very simple --- the winning and losing team for a particular match. It does not even take into consideration by how many points the winning team leads the losing team, which is also known as margin of victory (MOV). 
+
+But some other features may provide valuable insights into the ``true skill'' of a team. For example, the feature `Wloc', whether the winning team was at its home court, a neutral site or the losing team's court, indicates whether the winning team was granted the ``Home Court Advantage (HCA)''. HCA can sometimes improve a team's \emph{performance} significantly and lead to a victory even if the ``true skill'' of that team is lower than its opponent's. 
+
+Since TrueSkill does not accept these features as inputs directly, to incorporate them into the predictive models, their magnitudes are converted into some effects on the MOV of a match. For instance, HCA may be worth five points in a basketball game and therefore, five points are deducted from the winning team's final score, which may possibly result in a \emph{reverse} of the match outcome. Adjustments of this kind are carried out before the match records are fed to TrueSkill. The final features used in this project are summarised in Table~\ref{Ta:sele_feature}. 
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{ | l | l | }
+\hline
+\textbf{Feature} & \textbf{Possible Effects} \\ \hline
+Wteam & Identifies the winning team \\ \hline
+Wscore & Identifies the winning team's score \\ \hline
+Lteam &  Identifies the losing team \\ \hline
+Lscore & Identifies the losing team's score \\ \hline
+MOV & The larger the MOV, the larger the skill gap \\\hline 
+Wloc & Identifies whether HCA exists \\ \hline
+Numot & The more overtimes, the smaller the skill gap \\ \hline
+Wto & The less turnovers, the stronger the skill \\ \hline
+\end{tabular}
+\caption{A Summary of the Selected Features and Effectives}\label{Ta:sele_feature}
+\end{table}
+
+A larger MOV may be a good indicator of a larger skill gap between the winning team and the losing team. In this project, the effect of MOV is added iteratively: as long as the MOV is larger than some threshold value $m$, the match is considered a victory for the winning team and fed to TrueSkill, after which the MOV is deducted by $m$ and the process continues until MOV $<m$. Therefore, it is possible that an actual match is treated as \emph{multiple} victories because the match has a very large MOV. Although TrueSkill does not consider MOV, the \emph{number} of victories does matter in TrueSkill. 
+
+Occasionally, there is overtime in a basketball match if two teams tie at the end of the normal hours. According to the rules of basketball, additional overtime must be given if two teams still tie after the last overtime. In the case of multiple overtime, it is true that there will be a winner eventually, but the fact that the first overtime happens already provides some important information about the two teams' skill levels --- they should have close skill levels that cause overtime. In this project, whenever overtime occurs in a match, regardless of how many times it occurs, the scores of the two teams are made equal to reflect this intuition. 
+
+Turnovers can be thought as mistakes a team made in a match. There are many possible factors from both the team and its opponents that can cause turnovers, such as a double dribble or the ball being stolen. Therefore, it is a very comprehensive feature that may contain information from many other invisible factors. In this project, if a team commits more turnovers than its opponents', then its final score will be deducted by some variable amounts. 
+
+Table~\ref{Ta:results} summaries all the models built in this project and their respective ranks on Kaggle's leaderboard. 
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{ | l | l | l | l | l |}
+\hline
+\textbf{Model No.} & \textbf{Feature Used} & \textbf{LogLoss} & \textbf{Rank} & \textbf{Top} \\ \hline
+1 & Na\"{i}ve TrueSkill & 0.531040 & \nth{13} & 2.17\% \\ \hline
+2 & MOV & 0.538214 & \nth{34} & 5.68\% \\ \hline
+3 & HCA & 0.513445 & \nth{5} & 0.83\%\\ \hline
+4 & Overtime & 0.514140 & \nth{5} & 0.83\% \\ \hline
+5 & Turnover  & 0.503654 & \nth{3} & 0.50\%\\ \hline
+\end{tabular}
+\caption{A summary of the final results}\label{Ta:results}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{ | l | l | l | l | l |}
+\hline
+\textbf{Model No.} & \textbf{Feature Used} & \textbf{LogLoss} & \textbf{Rank} & \textbf{Top} \\ \hline
+1 & Na\"{i}ve TrueSkill & 1.542861 & \nth{585} & 97.66\% \\ \hline
+2 & MOV & 2.046105 & \nth{593} & 99.00\% \\ \hline
+3 & HCA & 0.505484 & \nth{3} & 0.50\%\\ \hline
+4 & Overtime & 0.504135 & \nth{3} & 0.50\% \\ \hline
+5 & Turnover  & 0.493128 & \nth{2} & 0.33\%\\ \hline
+\end{tabular}
+\caption{A summary of the final results}\label{Ta:results_ft}
+\end{table}
