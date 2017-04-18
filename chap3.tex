@@ -1,5 +1,5 @@
 \chapter{TrueSkill\texttrademark~Rating System}\label{Chap:3}
-TrueSkill~\cite{TS07} is a Gaussian rating system developed by Microsoft Research in 2007 to rank players on Xbox Live for the purpose of creating competitive matches for players with similar skill levels. While the Elo rating system is applicable to only two-player matches, the TrueSkill ranking system extends the use cases to multi-player matches. Section~\ref{Sec: tmm} discusses the Approximate Bayesian Inference --- the mathematical backbone of the TrueSkill rating system. Section~\ref{Sec: imp} presents the process of building predictive models based on an open-source implementation of the TrueSkill rating system. 
+TrueSkill~\cite{TS07} is a Gaussian rating system developed by Microsoft Research in 2007 to rank players on Xbox Live for the purpose of creating competitive matches amongst players with similar skill levels. While the Elo rating system is applicable to only two-player matches, the TrueSkill ranking system extends the use cases to multi-player matches. Section~\ref{Sec: tmm} describes Approximate Bayesian Inference --- the mathematical backbone of the TrueSkill rating system and Section~\ref{Sec: imp} discusses the prediction performances of several models built upon an open-source implementation of the TrueSkill rating system. 
 
 \section{Approximate Bayesian Inference}\label{Sec: tmm}
 
@@ -96,4 +96,6 @@ where $\phi$ is the standard Gaussian probability density function. Following Eq
 \Bigg{\}}
 \end{equation}
 
-\section{Implementation}\label{Sec: imp}
+Detailed derivations are omitted and can be found in~\cite{RC11}. Update equations for team $j$ and for the case of draw can be derived in a similar way. By means of Approximate Bayesian Inference, the TrueSkill rating system is able to update the skill of each team upon the end of a match and to estimate a team's probability of winning an upcoming match. 
+
+\section{Results \& Discussions}\label{Sec: imp}
