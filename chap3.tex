@@ -62,7 +62,7 @@ and
 \end{equation}
 
 The above update equations are applicable to the general cases where $n$ teams are involved. However, for NCAA tournament matches that are between only two teams, a simpler version of the update equation can be derived. Now consider two teams with skill $\matr{s} = [s_{i}, s_{j}]^{\intercal}$. In general, there is no draw in basketball matches, but for completeness, assume the \emph{draw margin} is $\varepsilon$ such that team $i$ beats team $j$ when $s_{i} - s_{j} > \varepsilon$ and the outcome is considered as draw when $| s_{i} - s_{j} | \leq \varepsilon$. Furthermore, define $c^{2} = 2\beta^{2} + \sigma_{i}^{2} + \sigma_{j}^{2}$. Then 
-\begin{equation}
+\begin{equation}\label{Eqn: win_prob}
 f(\matr{z}) = \Phi \Big{(} \frac{\mu_{i} - \mu_{j} - \varepsilon}{c}  \Big{)}
 \end{equation}
 when team $i$ beats team $j$. Alternatively, 
@@ -96,7 +96,7 @@ where $\phi$ is the standard Gaussian probability density function. Following Eq
 \Bigg{\}}
 \end{equation}
 
-Detailed derivations are omitted and can be found in~\cite{RC11}. Update equations for team $j$ and for the case of draw can be derived in a similar way. By means of Approximate Bayesian Inference, the TrueSkill rating system is able to update the skill of each team upon the end of a match and to estimate a team's probability of winning an upcoming match. 
+Detailed derivations are omitted and can be found in~\cite{RC11}. Update equations for team $j$ and for the case of draw can be derived in a similar way. By means of Approximate Bayesian Inference, the TrueSkill rating system is able to update the skill of each team upon the end of a match and to estimate a team's probability of winning an upcoming match based on Equation~\ref{Eqn: win_prob}.
 
 \section{Kaggle Results \& Discussions}\label{Sec: imp}
 
@@ -140,7 +140,7 @@ Turnovers can be thought as mistakes a team made in a match. There are many poss
 4 & Overtime & 0.514140 & \nth{5} & 0.83\% \\ \hline
 5 & Turnover  & 0.503654 & \nth{3} & 0.50\%\\ \hline
 \end{tabular}
-\caption{A summary of the Final Results (Without Fine-tuning)}\label{Ta:results}
+\caption{A Summary of the Final Results (Without Fine-tuning)}\label{Ta:results}
 \end{table}
 
 Table~\ref{Ta:results} summaries all the models built in this project and their respective ranks on Kaggle's leaderboard. Model 1 is built upon the bare TrueSkill rating system without any additional features other than the match outcomes. Model 2 incorporates MOV, but the performance becomes worse, indicating that the original intuition about MOV may not be correct; therefore, MOV is dropped from all subsequent models. From Model 3 onwards, all models are built upon their preceding models --- for example, Model 3 is a `subclass' of Model 1. The best model gives a \nth{3} rank on Kaggle's leaderboard. 
@@ -160,5 +160,5 @@ Table~\ref{Ta:results_ft} shows the leaderboard performances after this fine-tun
 4 & Overtime & 0.504135 & \nth{3} & 0.50\% \\ \hline
 5 & Turnover  & 0.493128 & \nth{2} & 0.33\%\\ \hline
 \end{tabular}
-\caption{A summary of the Final Results (With Fine-tuning)}\label{Ta:results_ft}
+\caption{A Summary of the Final Results (With Fine-tuning)}\label{Ta:results_ft}
 \end{table}
