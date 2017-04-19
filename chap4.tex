@@ -1,1 +1,5 @@
 \chapter{Conclusion}\label{Chap:4}
+
+Experiments in Section~\ref{Sec: imp} demonstrate that TrueSkill, built upon Approximate Bayesian Inference, is a feasible solution to the Kaggle challenge. In fact, Model 1 from Table~\ref{Ta:results}, the na\''{i}ve TrueSkill model, was also used to participate in this year's similar Kaggle competition ``March Machine Learning Mania \emph{2017}''. It scored 0.481061 based on the same LogLoss evaluation method and ranked \nth{48} on the leaderboard~\cite{KG17}. 
+
+Other models had not yet been built while the 2017 competition was accepting submissions, so they were instead tested on a \emph{simulated} 2015 competition, given that the \emph{real} 2015 competition was no longer accepting submissions. The 2015 NCAA Tournament results are provided in Kaggle's 2016 data sets and used as ground truths for the simulated competition. Models were allowed to use match records during the regular seasons up to 2015 to predict the outcomes of the 2015 tournament. The best model scored 0.479189 in this test. 
